@@ -1,0 +1,92 @@
+<% include layout/header.ejs %>
+
+<% include layout/navbar.ejs %>
+
+<div class="container mainCont">
+    <h2>Додавання нового транспорту</h2>
+
+
+    <form action="" method="POST">
+
+        <div class="form-group">
+            <label for="">Тип кузову:</label>
+            <select class="form-control" name="typeVahicle" required>
+                <option value="0">Виберіть</option>
+                <% data.forEach(function(items){ %>
+                <option value="<%-items.type%>">
+                    <%-items.type%>
+                </option>
+                <% }); %>
+            </select>
+            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
+        </div>
+
+        <div class="form-group">
+            <label for="">Марка:</label>
+            <select class="form-control" name="markVehicle" required>
+                <option value="0">Виберіть</option>
+                <% data.forEach(function(items){ %>
+                <option value="<%-items.type%>">
+                    <%-items.type%>
+                </option>
+                <% }); %>
+            </select>
+            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
+        </div>
+
+        <div class="form-group">
+            <label for="">Модель:</label>
+            <select class="form-control" name="modelVehicle" required>
+                <option value="0">Виберіть</option>
+                <% data.forEach(function(items){ %>
+                <option value="<%-items.type%>">
+                    <%-items.type%>
+                </option>
+                <% }); %>
+            </select>
+            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
+        </div>
+
+        <div class="form-group">
+            <label for="">Рік:</label>
+            <select class="form-control" name="yearVehicle" required>
+                <option value="0">Виберіть</option>
+                <% data.forEach(function(items){ %>
+                <option value="<%-items.type%>">
+                    <%-items.type%>
+                </option>
+                <% }); %>
+            </select>
+            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
+        </div>
+
+
+        <div class="form-group">
+            <label for="">Лінк на зображення:</label>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">URL</span>
+                </div>
+                <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                    name="image" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="">Ціна за день оренди:</label>
+            <div class="input-group">
+                <input type="number" class="form-control" aria-label="Amount (to the nearest dollar)" name="price" required>
+                <div class="input-group-append">
+                    <span class="input-group-text">грн/день</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="submit" class="btn btn-success">Додати</button>
+            <a href="/" class="btn btn-warning">Відміна</a>
+        </div>
+    </form>
+</div>
+
+<% include layout/footer.ejs %>

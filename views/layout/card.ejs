@@ -1,0 +1,27 @@
+<!-- eslint-disable css-rparentexpected-->
+<% data.forEach(function(items){ %>
+<div class='col-xl-4 col-lg-4 col-md-6 col-sm-12 cardContent'>
+    <div class='card1'>
+        <a href="/info/<%-items.id%>"><div class='dark'></div></a>
+        <div class='thumbnail' style="background-image: url(<%-items.img_url%>)"></div>
+        <div class='data'>
+            <h5>
+                <%-items.mark%> <%-items.model%>
+            </h5>
+            <p>
+                Компактний автомобіль з поперечно розташованим двигуном, що випускається компанією Honda. Вперше
+                представлений в липні 1972 р. Багато в чому завдяки цій моделі, компанія Honda увійшла до списку
+                світових автовиробників. Сівік став найуспішнішою моделлю Хонди і займає 6-те місце у списку найбільш
+                продаваних автомобілів світу.
+            </p>
+        </div>
+        <div class='blur'></div>
+        <div class='bottom1'>
+            <nav class="nav nav-pills nav-justified">
+                <a class="nav-link" href="/info/<%-items.id%>">Більше</a>
+                <a class="nav-link" href="/info/<%-items.id%>">Орендувати</a>
+            </nav>
+        </div>
+    </div>
+</div>
+<% }); %>

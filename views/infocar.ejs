@@ -1,0 +1,36 @@
+<% include layout/header.ejs %>
+<% include layout/navbar.ejs %>
+
+
+<div class="overlay">
+    <!-- <div class="container thumbnail-img"></div> -->
+    <div class="img-container" style="background-image: url(<%-data.img_url%>)"></div>
+</div>
+<div class="arrow">
+        <a href="/info/<%- (data.id == 0) ? dbl : data.id - 1 %>">
+            <i class="fas fa-arrow-circle-left"></i>
+        </a>
+        <a href="/info/<%- (data.id == dbl - 1) ? 0 : data.id + 1 %>">
+            <i class="fas fa-arrow-circle-right"></i>
+        </a>
+</div>
+<div class="container">
+    <div class="thumbnail-data container" style="background-image: url(<%-data.img_url%>)"></div>
+</div>
+<div class="container">
+    <div class="title">
+        <h1 class="display-3">
+            <%-data.mark%>
+            <%-data.model%>
+        </h1>
+    </div>
+    <div class="">
+        <div class="main_info col-lg-8 col-sm-12">
+            <h4><%-data.price%> грн/день</h4>
+            <button type="button" class="btn btn-light">Орендувати</button>
+        </div>
+    </div>
+</div>
+
+
+<% include layout/footer.ejs %>
