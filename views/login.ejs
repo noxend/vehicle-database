@@ -1,0 +1,25 @@
+<% include layout/header.ejs %>
+<% include layout/navbar.ejs %>
+
+
+<div class="container mainCont">
+  <div class="row">
+    <div class="shadow-sm col-lg-6 offset-md-3 login-panel-style">
+      <div class="body-p">
+        <form method="POST">
+          <h1 class="h3 mb-3 font-weight-normal">Авторизація</h1>
+          <div class="form-group">
+            <input name="email" type="email" class="form-control" required id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Електронна адреса">
+          </div>
+          <div class="form-group">
+            <input name="pass" type="password" class="form-control" required id="exampleInputPassword1" placeholder="Пароль">
+          </div>
+          <button type="submit" class="btn btn-dark btn-lg btn-block">Увійти</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<% include layout/footer.ejs %>

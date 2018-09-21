@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-red fixed-top">
 
     <div class="container">
         <a class="navbar-brand" href="/">Vehicle Rent</a>
@@ -12,22 +12,19 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="/">Головна<span class="sr-only">(current)</span></a>
                 </li>
-
             </ul>
             <div>
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            admin
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <label for="" class="dropdown-item">Темна тема</label>
-                            <div class="dropdown-divider"></div>
-                        </div>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/login">Увійти<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/signin">Реєстрація<span class="sr-only">(current)</span></a>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
 </nav>
+
+<% include modalWindow.ejs %>
