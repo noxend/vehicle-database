@@ -1,4 +1,6 @@
 const express = require("express");
+const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
 const bodyParser = require("body-parser");
 const config = require("./config");
 const mysql = require("./db");
@@ -9,22 +11,58 @@ const router = express.Router();
 
 const app = express();
 
+const sessionStore = new MySQLStore({
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  password: "128500",
+  database: "mydb"
+});
+
+app.use(
+  session({
+    secret: config.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: false,
+    store: sessionStore
+  })
+);
+
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/", (req, res) => {
+let ID, LOGIN, ADMIN;
+
+
+app.get("/", (request, response) => {
+  ID = request.session.userId
+  LOGIN = request.session.userLogin
+  ADMIN = request.session.admin
+
   mysql.connection.query("SELECT * FROM vehicle", (err, results) => {
     if (err) {
-      res.send(err);
+      response.send(err);
     } else {
-      res.render("index", { data: results });
+      response.render("index", { data: results, LOGIN, ID, ADMIN });
     }
   });
 });
 
+app.use('/api/auth',
+router.get('/logout', (request, response) => {
+  if(request.session){
+    request.session.destroy(() => {
+      response.redirect('/');
+    });
+  } else {
+    response.redirect('/');
+  }
+}));
+
 app.get("/add", (req, res) => {
+  
   mysql.connection.query("SELECT * FROM vehicle_type", (err, results) => {
     if (!err) res.render("create", { data: results });
     else console.log(err);
@@ -63,7 +101,9 @@ app.get("/info/:id", (req, res) => {
         // res.send(results);
         res.render("infocar", {
           data: results[0][0],
-          dbl: results.length
+          dbl: results.length,
+          LOGIN,
+          ID
         });
       }
     }
@@ -83,57 +123,140 @@ app.get("/db", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render('login')
+  res.render("login", {
+    LOGIN,
+    ID
+  });
 });
 
-app.post("/login", (req, res) => {
-  res.send(req.body)
-});
+app.post("/login", (request, response) => {
+  const login = request.body.login;
+  const pass = request.body.pass;
 
-app.get("/signin", (req, res) => {
-  res.render('signin')
-});
-
-app.post("/signin", (req, res) => {
-  const userName = req.body.login;
-  const pass = req.body.pass;
-  const passConfirm = req.body.passConfirm;
-
-  if(!userName || !pass || !passConfirm){
-    res.json({
+  if (!login || !pass) {
+    response.json({
       ok: false,
       errMessage: "Всі поля повинні бути заповненні!",
-      fields: ['userName', 'pass', 'confirmPass']
+      fields: ["userName", "pass"]
     });
-  } else if (userName.length < 3 || userName.length > 16) {
-    res.send({
-      ok: false,
-      errMessage: "Довжина логіну від 3 до 16 символів!",
-      fields: ['userName']
-    });
-  } else if (pass !== passConfirm){
-    res.send({
-      ok: false,
-      errMessage: "Паролі не співпадають",
-      fields: ['pass', 'confirmPass']
-    });
-  } else{
-    res.json({
-      ok: true
-    });
-    
-    bcrypt.hash(pass, null, null, function(err, hash) {
-      console.log(hash)
-      mysql.connection.query(`INSERT INTO users (user_name, pass_hash) VALUES ('${userName}', '${hash}');`, (err, results) => {
-        if (err) {res.send(err)} else {}
-      });
-    });
+  } else {
+    mysql.connection.query(
+      `select * from users where user_name = '${login}'`,
+      (err, results) => {
+        if (!results[0]) {
+          response.json({
+            ok: false,
+            errMessage: "Неправильний логін або пароль!",
+            fields: ["login", "pass"]
+          });
+        } else {
+          bcrypt.compare(pass, results[0].pass_hash, function(
+            err,
+            resultsHash
+          ) {
+            if (resultsHash) {
+              //TO DO login
+              
+              request.session.userId = results[0].id;
+              request.session.userLogin = results[0].user_name;
+              request.session.admin = results[0].admin;
+              response.json({
+                ok: true,
+                errMessage: "OK"
+              });
+            } else {
+              response.json({
+                ok: false,
+                errMessage: "Неправильний логін або пароль!",
+                fields: ["login", "pass"]
+              });
+            }
+          });
+        }
+      }
+    );
   }
 });
 
+app.get("/signin", (req, res) => {
+  res.render("signin", {
+    LOGIN,
+    ID
+  });
+});
+
+app.post("/signin", (request, response) => {
+  const userName = request.body.login;
+  const pass = request.body.pass;
+  const passConfirm = request.body.passConfirm;
+
+  if (!userName || !pass || !passConfirm) {
+    response.json({
+      ok: false,
+      errMessage: "Всі поля повинні бути заповненні!",
+      fields: ["userName", "pass", "confirmPass"]
+    });
+  } else if (!/^[a-zA-Z0-9]+$/.test(userName)) {
+    response.json({
+      ok: false,
+      errMessage: "Тільки латинські букви та цифри!",
+      fields: ["userName"]
+    });
+  } else if (userName.length < 3 || userName.length > 16) {
+    response.json({
+      ok: false,
+      errMessage: "Довжина логіну від 3 до 16 символів!",
+      fields: ["userName"]
+    });
+  } else if (pass !== passConfirm) {
+    response.json({
+      ok: false,
+      errMessage: "Паролі не співпадають",
+      fields: ["pass", "confirmPass"]
+    });
+  } else {
+    mysql.connection.query(
+      `select * from users where user_name = '${userName}'`,
+      (err, results) => {
+        if (err) {
+          response.send(err);
+        } else {
+          if (!results[0]) {
+            bcrypt.hash(pass, null, null, function(err, hash) {
+              mysql.connection.query(
+                `INSERT INTO users (user_name, pass_hash, admin) VALUES ('${userName}', '${hash}', '0');`,
+                (err) => {
+                  if (err) {
+                    response.send(err);
+                  } else {
+                    response.json({
+                      ok: true,
+                      errMessage: "Реєстрацію завершено!"
+                    });
+                  }
+                }
+              );
+            });
+          } else {
+            response.json({
+              ok: false,
+              errMessage: "Такий користувач вже існує!",
+              fields: ["userName"]
+            });
+          }
+        }
+      }
+    );
+  }
+});
+
+// app.post('/api/auth/logout', (request, response) => {
+  
+// });
+
 app.use(function(req, res, next) {
   res.status(404);
-  res.render("404", { data: "Вибачте, такої сторінки не існує!" });
+  res.render("404", { data: "Вибачте, такої сторінки не існує!", LOGIN});
 });
 
 app.listen(config.PORT, () => {

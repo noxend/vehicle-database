@@ -1,4 +1,16 @@
 "use strict";
+let notification = document.createElement("div");
+let form = document.getElementById("form");
+
+function insertAfter(elem, refElem) {
+  var parent = refElem.parentNode;
+  var next = refElem.nextSibling;
+  if (next) {
+    return parent.insertBefore(elem, next);
+  } else {
+    return parent.appendChild(elem);
+  }
+}
 
 document.getElementById("btnSignIn").addEventListener("click", e => {
   e.preventDefault();
@@ -8,7 +20,7 @@ document.getElementById("btnSignIn").addEventListener("click", e => {
     passConfirm: document.getElementById("confirmPassNameSignIn").value
   };
 
-  fetch("http://localhost:3000/signin", {
+  fetch("/signin", {
     method: "post",
     headers: { "Content-type": "application/json; charset=UTF-8" },
     body: JSON.stringify(data)
@@ -16,17 +28,35 @@ document.getElementById("btnSignIn").addEventListener("click", e => {
     .then(function(response) {
       response.json().then(function(data) {
         console.log(data);
+        if (!data.ok) {
+          notification.style.opacity = '1';
+          notification.classList = "notification warning";
+          notification.innerHTML = `<span class="closebtn">&times;</span>
+                                    <strong>Помилка! </strong>${
+                                      data.errMessage
+                                    }`;
+          insertAfter(notification, form.childNodes[1]);
+          
+        } else {
+          notification.style.opacity = '1'; 
+          notification.classList = "notification success";
+          notification.innerHTML = `<span class="closebtn">&times;</span>
+                                    <strong>OK. </strong>${data.errMessage} <a href="/login">Увійти</a>`;
+          insertAfter(notification, form.childNodes[1]);
+        }
+        let close = document.getElementsByClassName("closebtn");
+        for (let i = 0; i < close.length; i++) {
+          close[i].onclick = function() {
+            var div = this.parentElement;
+            div.style.opacity = "0";
+            setTimeout(function() {
+              form.removeChild(notification);
+            }, 600);
+          };
+        }
       });
     })
     .catch(function(err) {
-      console.log("Fetch Error :-S", err);
+      console.log("Fetch  :-S", err);
     });
-
-  // var xhr = new XMLHttpRequest();
-  // xhr.open("POST", '/signin', true);
-  // xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8 ');
-  // xhr.send(JSON.stringify(data));
-  // xhr.onreadystatechange = function() {
-  //   console.log(this.responseText);
-  // }
 });

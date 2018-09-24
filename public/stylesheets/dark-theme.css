@@ -1,3 +1,33 @@
 .dark-theme body{
+    background-color: #1b1b1b;
+}
+
+.dark-theme .card1{
+    background-color: #292929;
+    color: white;
+}
+
+.dark-theme .card1 .blur{
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #292929);
+}
+
+.dark-theme .card1 .bottom1{
     background-color: #212121;
+    border-top: #212121 1px solid;
+    color: white;
+}
+
+.dark-theme .login-panel-style{
+    background-color: #222222;
+    color: white;
+}
+
+.dark-theme .login-panel-style input{
+    background-color: #323232;
+    color: white;
+    border: none;
+}
+
+.dark-theme h1, .dark-theme h2, .dark-theme h3, .dark-theme h4, .dark-theme h5, .dark-theme h6, .dark-theme p, .dark-theme label{
+    color: white;
 }

@@ -11,7 +11,7 @@ body{
 }
 
 .bg-red{
-    background-color: #e74c3c;
+    background-color: #f44336;
 }
 
 .mainCont{
@@ -142,12 +142,60 @@ body{
     top: 10%;
 }
 
-.nav-item a{
+.nav-item > a{
     background-color: transparent;
     transition: 0.3s background-color;
     padding: 10px 20px !important;
+    border-radius: 5px;
 }
 
-.nav-item a:hover{
+.nav-item > a:hover{
     background-color: rgba(0, 0, 0, 0.15);
+}
+
+
+.btn-red {
+    color: #fff;
+    background-color: #e74c3c;
+    border-color: #d13f2f;
+}
+  
+.btn-red:hover {
+    color: #fff;
+    background-color: #d13f2f;
+    border-color: rgb(172, 27, 41);
+}
+
+.btn-red:focus, .btn-red.focus {
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);
+}
+
+
+.notification {
+    padding: 20px;
+    background-color: #f44336;
+    color: white;
+    opacity: 1;
+    transition: opacity 0.6s;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.notification.success {background-color: #4CAF50;}
+.notification.info {background-color: #2196F3;}
+.notification.warning {background-color: #ff9800; color: black}
+
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.closebtn:hover {
+    color: black;
 }
