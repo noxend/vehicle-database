@@ -35,11 +35,10 @@ app.use(express.static(path.join(__dirname, "public")));
 
 let ID, LOGIN, ADMIN;
 
-
 app.get("/", (request, response) => {
-  ID = request.session.userId
-  LOGIN = request.session.userLogin
-  ADMIN = request.session.admin
+  ID = request.session.userId;
+  LOGIN = request.session.userLogin;
+  ADMIN = request.session.admin;
 
   mysql.connection.query("SELECT * FROM vehicle", (err, results) => {
     if (err) {
@@ -50,23 +49,28 @@ app.get("/", (request, response) => {
   });
 });
 
-app.use('/api/auth',
-router.get('/logout', (request, response) => {
-  if(request.session){
-    request.session.destroy(() => {
-      response.redirect('/');
-    });
-  } else {
-    response.redirect('/');
-  }
-}));
+app.use(
+  "/api/auth",
+  router.get("/logout", (request, response) => {
+    if (request.session) {
+      request.session.destroy(() => {
+        response.redirect("/");
+      });
+    } else {
+      response.redirect("/");
+    }
+  })
+);
 
 app.get("/add", (req, res) => {
-  
-  mysql.connection.query("SELECT * FROM vehicle_type", (err, results) => {
-    if (!err) res.render("create", { data: results });
-    else console.log(err);
-  });
+  if (req.session.admin || req.session.login) {
+    mysql.connection.query("SELECT * FROM vehicle_type", (err, results) => {
+      if (!err) res.render("create", { data: results, LOGIN, ADMIN });
+      else console.log(err);
+    });
+  } else {
+    res.send("oops");
+  }
 });
 
 app.post("/add", (req, res) => {
@@ -115,9 +119,7 @@ app.get("/db", (req, res) => {
     if (err) {
       res.send(err);
     } else {
-      res.json({
-        data: results
-      });
+      res.json({ data: results });
     }
   });
 });
@@ -155,14 +157,10 @@ app.post("/login", (request, response) => {
             resultsHash
           ) {
             if (resultsHash) {
-              //TO DO login
-              
-              request.session.userId = results[0].id;
-              request.session.userLogin = results[0].user_name;
-              request.session.admin = results[0].admin;
+              setSessions(request, results);
               response.json({
                 ok: true,
-                errMessage: "OK"
+                ge: "OK"
               });
             } else {
               response.json({
@@ -224,16 +222,18 @@ app.post("/signin", (request, response) => {
           if (!results[0]) {
             bcrypt.hash(pass, null, null, function(err, hash) {
               mysql.connection.query(
-                `INSERT INTO users (user_name, pass_hash, admin) VALUES ('${userName}', '${hash}', '0');`,
-                (err) => {
-                  if (err) {
-                    response.send(err);
-                  } else {
-                    response.json({
-                      ok: true,
-                      errMessage: "Реєстрацію завершено!"
-                    });
-                  }
+                `INSERT INTO users (user_name, pass_hash, admin) VALUES ('${userName}', '${hash}', '0')`,
+                (err, res) => {
+                  mysql.connection.query(
+                    `select * from users where user_name = '${userName}'`,
+                    (err2, res2) => {
+                      setSessions(request, res2);
+                      response.json({
+                        ok: true,
+                        errMessage: "Реєстрацію завершено!"
+                      });
+                    }
+                  );
                 }
               );
             });
@@ -250,13 +250,15 @@ app.post("/signin", (request, response) => {
   }
 });
 
-// app.post('/api/auth/logout', (request, response) => {
-  
-// });
+function setSessions(req, value) {
+  req.session.userId = value[0].id;
+  req.session.userLogin = value[0].user_name;
+  req.session.admin = value[0].admin;
+}
 
 app.use(function(req, res, next) {
   res.status(404);
-  res.render("404", { data: "Вибачте, такої сторінки не існує!", LOGIN});
+  res.render("404", { data: "Вибачте, такої сторінки не існує!", LOGIN });
 });
 
 app.listen(config.PORT, () => {

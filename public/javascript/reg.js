@@ -41,8 +41,9 @@ document.getElementById("btnSignIn").addEventListener("click", e => {
           notification.style.opacity = '1'; 
           notification.classList = "notification success";
           notification.innerHTML = `<span class="closebtn">&times;</span>
-                                    <strong>OK. </strong>${data.errMessage} <a href="/login">Увійти</a>`;
+                                    <strong>OK. </strong>${data.errMessage} <a href="/">На головну</a>`;
           insertAfter(notification, form.childNodes[1]);
+          location.href = '/';
         }
         let close = document.getElementsByClassName("closebtn");
         for (let i = 0; i < close.length; i++) {
