@@ -1,0 +1,59 @@
+<% include layout/header.ejs %>
+<% include layout/navbar.ejs %>
+
+<div class="container-fluid my-container">
+    <div class="row">
+        <div class="col col-lg-2 col-sm-12">  
+            <h4>Функції</h4>
+        </div>
+        <div class="col col-lg-10 col-sm-12">
+            <table class="table table-hover table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">#</th>
+                        <th scope="col">Логін</th>
+                        <th scope="col">Час створення</th>
+                        <th scope="col">Права</th>
+                        <th scope="col">ID</th>
+                    </tr>
+                </thead>
+                <tbody id="data">
+                    <% let count = 1%>
+
+                    <% results.forEach(user => { %>
+
+                    <%
+                        let minute = '0' + new Date(parseInt(user.create_time)).getMinutes();
+                        let hour = '0' + new Date(parseInt(user.create_time)).getHours();
+                        let day = '0' + new Date(parseInt(user.create_time)).getDay();
+                        let month = '0' + new Date(parseInt(user.create_time)).getMonth();
+                        let year = new Date(parseInt(user.create_time)).getFullYear();
+                        let time = `${day.substr(-2)}/${month.substr(-2)}/${year} ${hour.substr(-2)}:${minute.substr(-2)}`;
+                
+                    %>
+
+                    <tr class="my-table">
+                        <th><input class="checkbox" type="checkbox" name="" id=""></th>
+                        <th><%-count++%></th>
+                        <td class="user-name">
+                            <%-user.user_name%> 
+                        </td>
+                        <td>
+                            <%-time%>
+                        </td>
+                        <td>
+                            <%-(user.admin == 1) ? "Адмін" : "-" %>
+                        </td>
+                        <td><%-user.id%></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+            <button id="btn-save" class="btn btn-danger">Видалити користувача(ів)</button>
+        </div>
+    </div>
+</div>
+
+<script src="/javascript/admin-panel.js"></script>
+<% include layout/footer.ejs %>

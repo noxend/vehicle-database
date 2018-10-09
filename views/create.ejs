@@ -4,13 +4,13 @@
 
 <div class="container mainCont">
     <h2>Додавання нового транспорту</h2>
-
+    <hr>
+    <h4>Основна інформація</h4>
 
     <form action="" method="POST">
-
         <div class="form-group">
-            <label for="">Тип кузову:</label>
-            <select class="form-control" name="typeVahicle" required>
+            <label for="">Марка</label>
+            <select class="form-control" name="mark" required>
                 <option value="0">Виберіть</option>
                 <% data.forEach(function(items){ %>
                 <option value="<%-items.type%>">
@@ -20,10 +20,15 @@
             </select>
             <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
         </div>
+        <div class="form-group">
+            <label for="">Модель</label>
+            <input type="text" class="form-control" name="model" required>
+        </div>
+
 
         <div class="form-group">
-            <label for="">Марка:</label>
-            <select class="form-control" name="markVehicle" required>
+            <label for="">Країна виробника:</label>
+            <select class="form-control" name="country" required>
                 <option value="0">Виберіть</option>
                 <% data.forEach(function(items){ %>
                 <option value="<%-items.type%>">
@@ -33,59 +38,135 @@
             </select>
             <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
         </div>
-
         <div class="form-group">
-            <label for="">Модель:</label>
-            <select class="form-control" name="modelVehicle" required>
-                <option value="0">Виберіть</option>
-                <% data.forEach(function(items){ %>
-                <option value="<%-items.type%>">
-                    <%-items.type%>
-                </option>
-                <% }); %>
-            </select>
-            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
+            <label for="">Рік</label>
+            <input type="number" class="form-control" name="year" required>
         </div>
-
-        <div class="form-group">
-            <label for="">Рік:</label>
-            <select class="form-control" name="yearVehicle" required>
-                <option value="0">Виберіть</option>
-                <% data.forEach(function(items){ %>
-                <option value="<%-items.type%>">
-                    <%-items.type%>
-                </option>
-                <% }); %>
-            </select>
-            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
-        </div>
-
-
         <div class="form-group">
             <label for="">Лінк на зображення:</label>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="inputGroup-sizing-default">URL</span>
                 </div>
-                <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
-                    name="image" required>
+                <input type="text" class="form-control" name="image" required>
             </div>
         </div>
 
         <div class="form-group">
             <label for="">Ціна за день оренди:</label>
             <div class="input-group">
-                <input type="number" class="form-control" aria-label="Amount (to the nearest dollar)" name="price" required>
+                <input type="number" class="form-control" aria-label="Amount (to the nearest dollar)" name="price"
+                    required>
                 <div class="input-group-append">
                     <span class="input-group-text">грн/день</span>
                 </div>
             </div>
         </div>
+        <hr>
+        <h4>Технічні характеристики</h4>
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo"
+                            aria-expanded="false" aria-controls="collapseTwo">
+                            Двигун
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="">Тип двигуна</label>
+                            <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="typeEngine"
+                                required>
+                            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Тип палива</label>
+                            <select class="form-control" name="typeFuel" required>
+                                <option value="0">Виберіть</option>
+                                <% data.forEach(function(items){ %>
+                                <option value="<%-items.type%>">
+                                    <%-items.type%>
+                                </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Об'єм двигуна</label>
+                            <div class="input-group">
+                                <select class="form-control" name="capacity" required>
+                                    <option value="0">Виберіть</option>
+                                    <% data.forEach(function(items){ %>
+                                    <option value="<%-items.type%>">
+                                        <%-items.type%>
+                                    </option>
+                                    <% }); %>
+                                </select>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">Літра</span>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
+                        </div>
 
+                        <div class="form-group">
+                            <label for="">Потужність</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" aria-label="Amount (to the nearest dollar)"
+                                    name="power" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">К. С.</span>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree"
+                            aria-expanded="false" aria-controls="collapseThree">
+                            Трансмісія
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="">Тип трансмісії</label>
+                            <select class="form-control" name="typeTransmission" required>
+                                <option value="0">Виберіть</option>
+                                <% data.forEach(function(items){ %>
+                                <option value="<%-items.type%>">
+                                    <%-items.type%>
+                                </option>
+                                <% }); %>
+                            </select>
+                            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Кількість ступенів</label>
+                            <select class="form-control" name="countTransmission" required>
+                                <option value="0">Виберіть</option>
+                                <% data.forEach(function(items){ %>
+                                <option value="<%-items.type%>">
+                                    <%-items.type%>
+                                </option>
+                                <% }); %>
+                            </select>
+                            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="btn-group" role="group" aria-label="Basic example">
             <button type="submit" class="btn btn-success">Додати</button>
             <button type="button" class="btn btn-warning" id="cencel-btn">Відміна</button>
-            <!-- <a href="/" class="btn btn-warning" id="cencel-btn">Відміна</a> -->
         </div>
     </form>
 </div>

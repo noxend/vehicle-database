@@ -32,6 +32,9 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="#">Налаштування</a>
+                            <% if(ADMIN) {%>
+                                <a class="dropdown-item" href="/admin-panel/users">Адмін панель</a>
+                            <%}%>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="/api/auth/logout">Вийти</a>
                         </div>

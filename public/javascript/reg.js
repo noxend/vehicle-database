@@ -26,8 +26,9 @@ document.getElementById("btnSignIn").addEventListener("click", e => {
     body: JSON.stringify(data)
   })
     .then(function(response) {
-      response.json().then(function(data) {
-        console.log(data);
+      response.json()
+      .then(function(data) {
+        console.info(data);
         if (!data.ok) {
           notification.style.opacity = '1';
           notification.classList = "notification warning";

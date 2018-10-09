@@ -22,7 +22,7 @@
     color: white;
 }
 
-.dark-theme .login-panel-style input{
+.dark-theme .login-panel-style input, .dark-theme select{
     background-color: #323232;
     color: white;
     border: none;

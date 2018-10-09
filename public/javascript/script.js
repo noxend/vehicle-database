@@ -1,7 +1,8 @@
 
-let dark_theme = localStorage.setItem('dark_theme', 'false');
+// let darkTheme = localStorage.setItem('dark_theme', 'true');
+let ifDarkTheme = localStorage.getItem('dark_theme');
 
-if(localStorage.getItem('dark_theme') === 'true'){
+if(ifDarkTheme === 'true'){
   document.getElementsByTagName('html')[0].classList = 'dark-theme';
 } else {
   document.getElementsByTagName('html')[0].classList = 'none';

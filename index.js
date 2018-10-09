@@ -49,6 +49,15 @@ app.get("/", (request, response) => {
   });
 });
 
+app.post('/api/admin-panel/remove', (request, response) => {
+  
+  for(item of request.body){
+    mysql.connection.query(`DELETE FROM users WHERE id = ${item}`, (err, req) => {
+      response.json({message: "successful", arr: request.body});
+    });
+  }
+});
+
 app.use(
   "/api/auth",
   router.get("/logout", (request, response) => {
@@ -63,7 +72,7 @@ app.use(
 );
 
 app.get("/add", (req, res) => {
-  if (req.session.admin || req.session.login) {
+  if (req.session.admin) {
     mysql.connection.query("SELECT * FROM vehicle_type", (err, results) => {
       if (!err) res.render("create", { data: results, LOGIN, ADMIN });
       else console.log(err);
@@ -107,6 +116,7 @@ app.get("/info/:id", (req, res) => {
           data: results[0][0],
           dbl: results.length,
           LOGIN,
+          ADMIN,
           ID
         });
       }
@@ -114,7 +124,7 @@ app.get("/info/:id", (req, res) => {
   });
 });
 
-app.get("/db", (req, res) => {
+app.get("/api/db", (req, res) => {
   mysql.connection.query(mysql.selectCar(), (err, results) => {
     if (err) {
       res.send(err);
@@ -131,6 +141,22 @@ app.get("/login", (req, res) => {
   });
 });
 
+app.get("/admin-panel/users", (req, res) => {
+  if(req.session.admin || req.session.login){
+    mysql.connection.query(`SELECT * FROM users`, (err, results) => {
+
+      res.render("admin-panel", {
+        LOGIN,
+        ADMIN,
+        ID,
+        results
+      });
+    });
+  } else {
+    res.send('nope nope nope');
+  }
+});
+
 app.post("/login", (request, response) => {
   const login = request.body.login;
   const pass = request.body.pass;
@@ -142,9 +168,7 @@ app.post("/login", (request, response) => {
       fields: ["userName", "pass"]
     });
   } else {
-    mysql.connection.query(
-      `select * from users where user_name = '${login}'`,
-      (err, results) => {
+    mysql.connection.query(`select * from users where user_name = '${login}'`, (err, results) => {
         if (!results[0]) {
           response.json({
             ok: false,
@@ -187,6 +211,7 @@ app.post("/signin", (request, response) => {
   const userName = request.body.login;
   const pass = request.body.pass;
   const passConfirm = request.body.passConfirm;
+  const date = Date.now();
 
   if (!userName || !pass || !passConfirm) {
     response.json({
@@ -213,17 +238,24 @@ app.post("/signin", (request, response) => {
       fields: ["pass", "confirmPass"]
     });
   } else {
-    mysql.connection.query(
-      `select * from users where user_name = '${userName}'`,
-      (err, results) => {
+    mysql.connection.query(`select * from users where user_name = '${userName}'`,(err, results) => {
+
         if (err) {
           response.send(err);
         } else {
+          
           if (!results[0]) {
             bcrypt.hash(pass, null, null, function(err, hash) {
-              mysql.connection.query(
-                `INSERT INTO users (user_name, pass_hash, admin) VALUES ('${userName}', '${hash}', '0')`,
+              mysql.connection.query(`INSERT INTO users (user_name, pass_hash, admin, create_time) VALUES ('${userName}', '${hash}', '0', '${date}')`,
                 (err, res) => {
+                  if(err) {
+                    console.log(err);
+                    response.json({
+                      ok: false,
+                      errMessage: err.toString()
+                    });
+                  }
+
                   mysql.connection.query(
                     `select * from users where user_name = '${userName}'`,
                     (err2, res2) => {
@@ -258,7 +290,7 @@ function setSessions(req, value) {
 
 app.use(function(req, res, next) {
   res.status(404);
-  res.render("404", { data: "Вибачте, такої сторінки не існує!", LOGIN });
+  res.render("404", { data: "Вибачте, такої сторінки не існує!", LOGIN, ADMIN });
 });
 
 app.listen(config.PORT, () => {
