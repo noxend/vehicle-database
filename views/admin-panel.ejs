@@ -1,59 +1,114 @@
 <% include layout/header.ejs %>
-<% include layout/navbar.ejs %>
+<% include layout/navbar-admin-p.ejs %>
+<% include layout/modalWindow.ejs %>
 
-<div class="container-fluid my-container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col col-lg-2 col-sm-12">  
-            <h4>Функції</h4>
+        <div class="col col-lg-2 col-sm-12 sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="" class="nav-link active"><i class="fas fa-users"></i>Користувачі</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link active"><i class="fas fa-car"></i>Автомобілі</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div class="col col-lg-10 col-sm-12">
-            <table class="table table-hover table-sm table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col">#</th>
-                        <th scope="col">Логін</th>
-                        <th scope="col">Час створення</th>
-                        <th scope="col">Права</th>
-                        <th scope="col">ID</th>
-                    </tr>
-                </thead>
-                <tbody id="data">
-                    <% let count = 1%>
+        <div class="col col-lg-10 col-sm-12 main ml-lg-auto">
+            <div class="my-table-style">
+                <div>
+                    <h4>Користувачі</h4>
+                    <ul>
+                        <li class="green">Адміни</li>
+                        <li class="yellow">Користувачі</li>
+                    </ul>
+                </div>
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">#</th>
+                            <th scope="col">Логін</th>
+                            <th scope="col">E-Mail</th>
+                            <th scope="col">Час створення</th>
+                            <th scope="col">Права</th>
+                            <th scope="col">ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data">
+                        <% let count = 1%>
 
-                    <% results.forEach(user => { %>
+                        <% results.forEach(user => { %>
 
-                    <%
+                        <%
                         let minute = '0' + new Date(parseInt(user.create_time)).getMinutes();
                         let hour = '0' + new Date(parseInt(user.create_time)).getHours();
-                        let day = '0' + new Date(parseInt(user.create_time)).getDay();
+                        let day = '0' + new Date(parseInt(user.create_time)).getDate();
                         let month = '0' + new Date(parseInt(user.create_time)).getMonth();
                         let year = new Date(parseInt(user.create_time)).getFullYear();
                         let time = `${day.substr(-2)}/${month.substr(-2)}/${year} ${hour.substr(-2)}:${minute.substr(-2)}`;
-                
-                    %>
+                        %>
 
-                    <tr class="my-table">
-                        <th><input class="checkbox" type="checkbox" name="" id=""></th>
-                        <th><%-count++%></th>
-                        <td class="user-name">
-                            <%-user.user_name%> 
-                        </td>
-                        <td>
-                            <%-time%>
-                        </td>
-                        <td>
-                            <%-(user.admin == 1) ? "Адмін" : "-" %>
-                        </td>
-                        <td><%-user.id%></td>
-                    </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-            <button id="btn-save" class="btn btn-danger">Видалити користувача(ів)</button>
+                        <% if(user.admin == 1) {%>
+                            <tr class="my-table" style="border-left: 10px solid #8ee398">
+                                <th>
+                                    <input class="checkbox" type="checkbox" name="" id="">
+                                </th>
+                                <th>
+                                    <%-count++%>
+                                </th>
+                                <td class="user-name">
+                                    <%-user.user_name%>
+                                </td>
+                                <td>
+                                    noxios5674@gmail.com    
+                                </td>
+                                <td>
+                                    <%-time%>
+                                </td>
+                                
+                                <td>
+                                    <%-(user.admin == 1) ? "Адмін" : "-" %>
+                                </td>
+                                <td>
+                                    <%-user.id%>
+                                </td>
+                            </tr>
+                        <% } else {%>
+                            <tr class="my-table" style="border-left: 10px solid #ffdc87">
+                                <th>
+                                    <input class="checkbox" type="checkbox" name="" id="">
+                                </th>
+                                <th>
+                                    <%-count++%>
+                                </th>
+                                <td class="user-name">
+                                    <%-user.user_name%>
+                                </td>
+                                <td>
+                                    noxios5674@gmail.com    
+                                </td>
+                                <td>
+                                    <%-time%>
+                                </td>
+                                <td>
+                                    <%-(user.admin == 1) ? "Адмін" : "-" %>
+                                </td>
+                                <td>
+                                    <%-user.id%>
+                                </td>
+                            </tr>
+                        <% } %>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            <button id="btn-save" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
         </div>
     </div>
-</div>
 
-<script src="/javascript/admin-panel.js"></script>
-<% include layout/footer.ejs %>
+
+    <script src="/javascript/admin-panel.js"></script>
+    <% include layout/footer.ejs %>

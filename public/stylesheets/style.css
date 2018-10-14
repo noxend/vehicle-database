@@ -1,3 +1,11 @@
+*{
+    list-style: none;
+}
+
+i{
+    user-select: none;
+}
+
 body{
     background-color: #f4f4f4;
 }
@@ -14,10 +22,34 @@ body{
     background-color: #f44336;
 }
 
-.mainCont, .my-container{
-    top: 80px;
+.mainCont, .my-container{ 
     position: relative;
-    
+}
+
+.sidebar, .main, .my-container{
+    padding-top: 75px;
+}
+
+.main{
+    height: 500vh;
+    /* background-color: white; */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.sidebar{
+    position:fixed;
+    background-color: #292929;
+    height: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.sidebar-sticky a{
+    color: rgb(219, 219, 219);
+}
+
+.sidebar-sticky i {
+    margin-right: 10px;
 }
 
 
@@ -39,7 +71,7 @@ body{
     border-radius: 5px;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    transition: .3s;
+    transition: .3s transform;
 }
 
 .card1:hover{
@@ -149,7 +181,7 @@ body{
     background-color: transparent;
     transition: 0.3s background-color;
     padding: 10px 20px !important;
-    border-radius: 5px;
+    /* border-radius: 5px; */
 }
 
 .nav-item > a:hover{
@@ -206,3 +238,213 @@ body{
 .change-name-table{
     display: none;
 }
+
+.thumbnail-image{
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 6px;
+    border: 2px solid rgba(0, 0, 0, 0.24);
+    transition: .1s;
+}
+
+
+.dropdown{
+    padding: 7px;
+}
+
+.dropdown:hover{
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.details > .menu-container{
+    user-select: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.details p{
+    margin: 0;
+    margin-right: 5px;
+    color: white; 
+}
+.details div > i{
+    transition: .2s;
+    color: white;
+}
+
+.details div:hover .details div i{
+    transform: rotate(180deg);
+}
+
+.details div:hover .thumbnail-image{
+    /* transform: translateY(10px); */
+    transform: scale(1.1);
+}
+
+.thumbnail-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 14px;
+    cursor: pointer; 
+}
+
+/* 
+.navbar{
+    padding-top: 0;
+    padding-bottom: 0;
+    min-height: 60px;
+} */
+
+.right-side{
+    display: flex;
+}
+
+.my-menu{
+    display: block;
+    position: absolute;
+    opacity: 0;
+    right: 0;
+    transform:scale(0); 
+    left: auto;
+    top: 40px;
+    width: 240px;
+    background-color: white;
+    border-radius: 3px;
+    box-shadow: 0 3px 20px rgba(89, 105, 129, .3), 0 1px 2px rgba(0, 0, 0, .05), 0 0 0 1px rgba(89, 105, 129, .1);
+    transition: .2s;
+    animation-duration: .2s
+}
+
+
+.my-menu.show{
+    opacity: 1;
+    transform:scale(1); 
+    animation-name: zoomIn;
+    
+}
+
+.my-menu.hiden{
+    opacity: 0;
+    transform:scale(0); 
+    animation-name: zoomOut;
+}
+
+@keyframes zoomIn {
+    0% {
+      transform:scale(0.8);
+    }
+    100% {
+      transform:scale(1);
+    }
+  }
+
+  @keyframes zoomOut {
+    0% {
+      transform:scale(1);
+    }
+    100% {
+      transform:scale(0.8);
+    }
+  }
+  
+
+.my-menu ul{
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.thumbnail-image-menu{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 4px solid rgba(0, 0, 0, 0.24);
+    box-sizing: content-box;
+}
+
+.header-menu{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    transition: .3s;
+}
+
+.my-menu ul li:not(:last-child){
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.my-menu ul li:hover{
+    background-color: rgba(0, 0, 0, 0.025);
+}
+
+.items-menu{ 
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.items-menu i {
+    margin-right: 10px; 
+}
+
+.my-menu a, .details a{
+    color: #424242;
+    text-decoration: none;
+}
+
+#data tr{
+    cursor: pointer;
+}
+
+
+
+/* TABLE */
+.my-table-style > div:first-child{
+    display: flex;
+    align-items: center;
+}
+
+.my-table-style > div{
+    margin-bottom: 10px;
+}
+
+.my-table-style > div > ul, .my-table-style > div > h4{
+    padding: 0;
+    margin: 0;
+}
+
+.my-table-style > div > ul{
+    display: flex;
+    margin-left: 25px;
+}
+
+.my-table-style > div > ul > li:not(:first-child){
+    margin-left: 10px;
+}
+
+.my-table-style > div > ul > li.green{
+    padding: 0 10px;
+    background-color: #8ee398;
+    border-radius: 5px;
+    border: 1px solid #76ca81;
+    color: rgb(23, 102, 25);
+    /* display: flex; */
+    /* align-items: center; */
+}
+
+.my-table-style > div > ul > li.yellow{
+    padding: 0 10px;
+    background-color: #ffdc87;
+    border-radius: 5px;
+    border: 1px solid #ebc361;
+    color: #70591f;
+    /* display: flex; */
+    /* align-items: center; */
+}
+/* TABLE */

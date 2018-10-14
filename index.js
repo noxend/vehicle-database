@@ -6,8 +6,9 @@ const config = require("./config");
 const mysql = require("./db");
 const path = require("path");
 const bcrypt = require("bcrypt-nodejs");
-
 const router = express.Router();
+
+const routersUser = require("./routers/router-user")
 
 const app = express();
 
@@ -33,30 +34,29 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-let ID, LOGIN, ADMIN;
+
+
+
 
 app.get("/", (request, response) => {
-  ID = request.session.userId;
-  LOGIN = request.session.userLogin;
-  ADMIN = request.session.admin;
-
-  mysql.connection.query("SELECT * FROM vehicle", (err, results) => {
-    if (err) {
-      response.send(err);
-    } else {
-      response.render("index", { data: results, LOGIN, ID, ADMIN });
-    }
-  });
-});
-
-app.post('/api/admin-panel/remove', (request, response) => {
+  let ID = request.session.userId;
+  let LOGIN = request.session.userLogin;
+  let ADMIN = request.session.admin;
   
-  for(item of request.body){
-    mysql.connection.query(`DELETE FROM users WHERE id = ${item}`, (err, req) => {
-      response.json({message: "successful", arr: request.body});
-    });
-  }
+  promiseMySqlQuery(`SELECT * FROM vehicle`)
+    .then(results => {
+      response.render("index", { data: results, LOGIN, ID, ADMIN });
+    })
+    .catch(err => {
+      response.send(err);
+    })
 });
+
+
+app.use('/api/user/', routersUser.router);
+
+
+
 
 app.use(
   "/api/auth",
@@ -72,6 +72,11 @@ app.use(
 );
 
 app.get("/add", (req, res) => {
+
+  let ID = req.session.userId;
+  let LOGIN = req.session.userLogin;
+  let ADMIN = req.session.admin;
+  
   if (req.session.admin) {
     mysql.connection.query("SELECT * FROM vehicle_type", (err, results) => {
       if (!err) res.render("create", { data: results, LOGIN, ADMIN });
@@ -104,14 +109,17 @@ app.post("/add", (req, res) => {
 // });
 
 app.get("/info/:id", (req, res) => {
-  mysql.connection.query(`call query_car(${req.params.id})`, (err, results) => {
-    if (err) {
-      res.send(err);
-    } else {
+
+  let ID = req.session.userId;
+  let LOGIN = req.session.userLogin;
+  let ADMIN = req.session.admin;
+
+  promiseMySqlQuery(`call query_car(${req.params.id})`)
+    .then(results => {
       if (!results[0][0]) {
         res.render("404", { data: "Вибачте, такої сторінки не існує!" });
       } else {
-        // res.send(results);
+
         res.render("infocar", {
           data: results[0][0],
           dbl: results.length,
@@ -120,8 +128,11 @@ app.get("/info/:id", (req, res) => {
           ID
         });
       }
-    }
-  });
+    })
+    .catch(err => {
+      console.log('Error', err);
+    });
+
 });
 
 app.get("/api/db", (req, res) => {
@@ -135,26 +146,44 @@ app.get("/api/db", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render("login", {
-    LOGIN,
-    ID
-  });
+
+  let ID = req.session.userId;
+  let LOGIN = req.session.userLogin;
+  let ADMIN = req.session.admin;
+
+  if(!req.session.userLogin){
+    res.render("login", {
+      LOGIN,
+      ID
+    });
+  } else {
+    res.redirect('/');
+  }
 });
 
 app.get("/admin-panel/users", (req, res) => {
-  if(req.session.admin || req.session.login){
-    mysql.connection.query(`SELECT * FROM users`, (err, results) => {
 
-      res.render("admin-panel", {
-        LOGIN,
-        ADMIN,
-        ID,
-        results
-      });
-    });
+  let ID = req.session.userId;
+  let LOGIN = req.session.userLogin;
+  let ADMIN = req.session.admin;
+  
+  if(req.session.admin || req.session.login){
+    promiseMySqlQuery(`SELECT * FROM users`)
+      .then(results => {
+        res.render("admin-panel", {
+          LOGIN,
+          ADMIN,
+          ID,
+          results
+        });
+      })
+      .catch(err => {
+        console.log('Error', err)
+      })
   } else {
     res.send('nope nope nope');
   }
+
 });
 
 app.post("/login", (request, response) => {
@@ -201,10 +230,19 @@ app.post("/login", (request, response) => {
 });
 
 app.get("/signin", (req, res) => {
-  res.render("signin", {
-    LOGIN,
-    ID
-  });
+
+  let ID = req.session.userId;
+  let LOGIN = req.session.userLogin;
+  let ADMIN = req.session.admin;
+
+  if(!req.session.userLogin){
+    res.render("signin", {
+      LOGIN,
+      ID
+    });
+  } else {
+    res.redirect('/');
+  }
 });
 
 app.post("/signin", (request, response) => {
@@ -282,13 +320,35 @@ app.post("/signin", (request, response) => {
   }
 });
 
-function setSessions(req, value) {
-  req.session.userId = value[0].id;
-  req.session.userLogin = value[0].user_name;
-  req.session.admin = value[0].admin;
-}
+app.get('/api/data/user', (request, response) => {
+
+  promiseMySqlQuery(`SELECT * FROM users WHERE id = ${request.session.userId}`)
+    .then(results => {
+      response.json({data: results})
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
+app.get('/api/data/user/:id', (request, response) => {
+
+  promiseMySqlQuery(`SELECT * FROM users WHERE id = '${request.params.id}'`)
+    .then(results => {
+      response.json({data: results})
+    })
+    .catch(err => {
+      console.log(err);
+    });
+    
+}); 
 
 app.use(function(req, res, next) {
+
+  let ID = req.session.userId;
+  let LOGIN = req.session.userLogin;
+  let ADMIN = req.session.admin;
+
   res.status(404);
   res.render("404", { data: "Вибачте, такої сторінки не існує!", LOGIN, ADMIN });
 });
@@ -296,3 +356,23 @@ app.use(function(req, res, next) {
 app.listen(config.PORT, () => {
   console.log(`Listening port ${config.PORT}`);
 });
+
+function setSessions(req, value) {
+  req.session.userId = value[0].id;
+  req.session.userLogin = value[0].user_name;
+  req.session.admin = value[0].admin;
+}
+
+function promiseMySqlQuery(query){
+  return new Promise(function(resolve, reject) {
+    mysql.connection.query(query, (err, results) => {
+      if(err) { reject(err) }
+      else { resolve(results) }
+    });
+  })
+}
+
+
+
+
+

@@ -1,34 +1,28 @@
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Реєстрація</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form method="POST">
-            <div class="form-group">
-              <label for="exampleInputEmail1">Email address</label>
-              <input type="email" id="email-value-reg" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" name="email">
-              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-            </div>
-            <div class="form-group">
-              <label for="exampleInputPassword1">Password</label>
-              <input type="password" id="pass-value-reg" class="form-control" id="exampleInputPassword1" placeholder="Password" name="pass">
-            </div>
-            <div class="form-group form-check">
-              <input type="checkbox" id="checkbox-value-reg" class="form-check-input" id="exampleCheck1">
-              <label class="form-check-label" for="exampleCheck1">Check me out</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Відміна</button>
-        <button type="button" class="btn btn-primary" id="register-button">Зареєструватися</button>
-      </div>
+<div class="modal-window-bg hiden" id="modal-window-id">
+  <div class="modal-window-my hiden" id="modal-window-my-id">
+    <div class="nx-modal-top">
+      <span>
+        <h5>Редагування користувача</h5>
+      </span>
+      <i class="fas fa-times" onclick="closeModal()"></i>
+    </div>
+    <div class="nx-modal-body">
+      <form action="">
+        <div class="form-group">
+          <label for="user-login" class="col-form-label">Логін:</label>
+          <input type="text" class="form-control" required id="user-login">
+        </div>
+        <div class="form-group form-check">
+          <input type="checkbox" class="form-check-input" id="if-user-admin">
+          <label class="form-check-label" for="if-user-admin">Права адміністратора</label>
+        </div>
+      </form>
+    </div>
+    <div class="nx-modal-bottom">
+      <button class="btn btn-sm btn-secondary" id="close-model-window" onclick="closeModal()">Відміна</button>
+      <button type="button" class="btn btn-sm btn-success" id="save-user-data">Зберегти зміни</button>
     </div>
   </div>
 </div>
+
+<link rel="stylesheet" type="text/css" href="/stylesheets/modal-window.css">

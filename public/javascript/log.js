@@ -46,6 +46,7 @@ document.getElementById("btn-login").addEventListener("click", e => {
         insertAfter(notification, form.childNodes[1]);
         location.href = '/';
       }
+      
       let close = document.getElementsByClassName("closebtn");
       for (let i = 0; i < close.length; i++) {
         close[i].onclick = function() {

@@ -1,0 +1,90 @@
+
+
+.modal-window-bg {
+  padding-top: 10%; 
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  z-index: 1080; 
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.6);
+  transition: .3s;
+  
+}
+
+.modal-window-bg.hiden{
+  visibility: hidden;
+  opacity: 0;
+}
+
+.modal-window-my{
+  z-index: 2000;
+  overflow: hidden;
+  border-radius: 5px;
+  position: absolute;
+  width: 460px;
+  background-color: white;
+  box-shadow: 0 3px 20px rgba(89, 105, 129, .3), 0 1px 2px rgba(0, 0, 0, .05), 0 0 0 1px rgba(89, 105, 129, .1);
+  border-radius: 3px;
+  animation-name: animatetop;
+  animation-duration: .2s;
+}
+
+.modal-window-my.hiden{
+  animation-name: animate-back;
+  opacity: 0;
+}
+
+@keyframes animatetop {
+  from {opacity:0; transform: scale(0.8)}
+  to {opacity:1; transform: scale(1)}
+}
+
+@keyframes animate-back {
+  from {opacity:1; transform: scale(1)}
+  to {opacity:0; transform: scale(0.8)}
+}
+
+.nx-modal-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #292929;
+  padding: 10px 15px;
+}
+
+.nx-modal-top span h5{
+  color: white;
+  margin: 0;
+}
+.nx-modal-top i{
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  transition: .3s;
+}
+
+.nx-modal-top i:hover{
+  transform: scale(1.3)
+}
+
+.nx-modal-body{
+  padding: 10px 15px;
+}
+
+.nx-modal-bottom{
+  display: flex;
+  justify-content: flex-end;
+  background-color: #f8f9fa;
+  border-top: #e0e0e0 1px solid;
+  padding: 10px 15px;
+}
+
+.nx-modal-bottom button:last-child{
+  margin-left: 5px;
+}
+
