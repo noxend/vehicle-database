@@ -43,15 +43,15 @@
                         <% results.forEach(user => { %>
 
                         <%
-                        let minute = '0' + new Date(parseInt(user.create_time)).getMinutes();
-                        let hour = '0' + new Date(parseInt(user.create_time)).getHours();
-                        let day = '0' + new Date(parseInt(user.create_time)).getDate();
-                        let month = '0' + new Date(parseInt(user.create_time)).getMonth();
-                        let year = new Date(parseInt(user.create_time)).getFullYear();
+                        let minute = '0' + new Date(parseInt(user.create_date)).getMinutes();
+                        let hour = '0' + new Date(parseInt(user.create_date)).getHours();
+                        let day = '0' + new Date(parseInt(user.create_date)).getDate();
+                        let month = '0' + (new Date(parseInt(user.create_date)).getMonth() + 1);
+                        let year = new Date(parseInt(user.create_date)).getFullYear();
                         let time = `${day.substr(-2)}/${month.substr(-2)}/${year} ${hour.substr(-2)}:${minute.substr(-2)}`;
                         %>
 
-                        <% if(user.admin == 1) {%>
+                        <% if(user.role == 1) {%>
                             <tr class="my-table" style="border-left: 10px solid #8ee398">
                                 <th>
                                     <input class="checkbox" type="checkbox" name="" id="">
@@ -70,7 +70,7 @@
                                 </td>
                                 
                                 <td>
-                                    <%-(user.admin == 1) ? "Адмін" : "-" %>
+                                    <%-(user.role == 1) ? "Адмін" : "-" %>
                                 </td>
                                 <td>
                                     <%-user.id%>

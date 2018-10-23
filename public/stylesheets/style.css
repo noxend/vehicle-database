@@ -315,7 +315,7 @@ body{
     background-color: white;
     border-radius: 3px;
     box-shadow: 0 3px 20px rgba(89, 105, 129, .3), 0 1px 2px rgba(0, 0, 0, .05), 0 0 0 1px rgba(89, 105, 129, .1);
-    transition: .2s;
+    transition: .2s opacity;
     animation-duration: .2s
 }
 
@@ -427,6 +427,15 @@ body{
 .my-table-style > div > ul > li:not(:first-child){
     margin-left: 10px;
 }
+
+.my-table-style > div > ul > li{
+    transition: .3s;
+}
+
+.my-table-style > div > ul > li:hover{
+    transform: translate(0, -2px);
+}
+
 
 .my-table-style > div > ul > li.green{
     padding: 0 10px;

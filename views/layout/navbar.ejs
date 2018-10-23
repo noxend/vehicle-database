@@ -7,6 +7,9 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="/">Головна<span class="sr-only">(current)</span></a>
                 </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Про проект<span class="sr-only">(current)</span></a>
+                </li>
             </ul>
             <% if (!LOGIN) { %>
             <div>
@@ -35,7 +38,7 @@
                             <li>
                                 <a href="#" class="header-menu">
                                     <div>
-                                        <img class="thumbnail-image-menu" id="thumbnail-image-menu" src="https://vignette.wikia.nocookie.net/adventuretimewithfinnandjake/images/e/e4/At_100x100_iconjake.jpg/revision/latest?cb=20100502232308"
+                                        <img class="thumbnail-image-menu" id="thumbnail-image-menu" src="https://coubsecure-s.akamaihd.net/get/b112/p/channel/cw_avatar/33bd3fb4778/cf1f7cfc98a9a758401b0/profile_pic_new_1474645315_dssoj1_att-url-download.gif"
                                             alt="">
                                     </div>
                                     <div class="name-menu">
@@ -45,16 +48,21 @@
                                 </a>
                             </li>
                             <li><a class="items-menu" href="#"><i class="fas fa-sliders-h"></i> Налаштування</a></li>
-                            <%if(ADMIN) {%>
+                            <%if(ROLE == 1) {%>
                             <li><a class="items-menu" href="/admin-panel/users"><i class="fas fa-sliders-h"></i> Адмін
                                     панель</a></li>
                             <%}%>
                             <li><a class="items-menu" href="/api/auth/logout"><i class="fas fa-sign-out-alt"></i> Вийти</a></li>
                             <li class="toggle">
-                                <!-- <input type="checkbox" name="" id="checkbox-nav"> -->
+                                <div>
+                                    <input type="checkbox" id="switch">
+                                    <label for="switch">Toggle</label>
+                                </div>
+                                <label>Темна тема</label>
                             </li>
                         </ul>
                     </div>
+                    <div class="menu-bg"></div>
                 </div>
             </div>
             <script src="/javascript/nav-bar.js"></script>

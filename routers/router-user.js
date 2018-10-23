@@ -18,13 +18,10 @@ router.post('/update', (request, response) => {
 }),
 router.post('/remove', (request, response) => {
   for(item of request.body){
-    if(request.session.userId != item){
-      mysql.connection.query(`DELETE FROM users WHERE id = ${item}`, (err, req) => {
-        response.json({state: true, message: "successful", arr: request.body});
-      });
-    } else {
-      response.json({state: false, message: "error", arr: request.body});
-    }
+    if(request.session.userId == item) continue;
+    mysql.connection.query(`DELETE FROM users WHERE id = ${item}`, (err, req) => {
+      response.json({state: true, message: "successful", arr: request.body});
+    });
   }
 })
 

@@ -15,9 +15,12 @@ menu.addEventListener('click', () => {
   }
 });
 
-window.addEventListener('mouseup', (e) => {  
-  if(e.target != menuDetails && state && e.target != document.getElementsByClassName('xxx')[0]){
+document.addEventListener('mouseup', (e) => { 
+  
+  if(e.target != menuDetails && state && e.target.parentNode.parentNode.parentNode.parentNode != menuDetails){
     menuDetails.classList = 'my-menu hiden';
     state = !state;
   }
 });
+
+

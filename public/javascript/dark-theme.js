@@ -1,7 +1,8 @@
 let ifDarkTheme = localStorage.getItem('dark_theme');
 
 window.onload = () => {
-  let toggle = document.getElementById('checkbox-nav');
+  let toggle = document.getElementById('switch');
+  
   toggle.addEventListener('click', (e) => {
     if(toggle.checked == true){
       localStorage.setItem('dark_theme', 'true');

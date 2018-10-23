@@ -17,6 +17,19 @@
     color: white;
 }
 
+.dark-theme .my-menu{
+    background-color: #212121;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.dark-theme .my-menu ul li a, .my-menu .dark-theme ul li label{
+    color: white;
+}
+
+.dark-theme .my-menu ul li:not(:last-child){
+    border-bottom: 1px solid #252525;
+}
+
 .dark-theme .login-panel-style{
     background-color: #222222;
     color: white;

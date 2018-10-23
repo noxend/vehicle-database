@@ -8,16 +8,17 @@ const path = require("path");
 const bcrypt = require("bcrypt-nodejs");
 const router = express.Router();
 
-const routersUser = require("./routers/router-user")
+const routersUser = require("./routers/router-user");
+const vehicleSpec= require("./routers/router-vehicle").router;
 
 const app = express();
 
 const sessionStore = new MySQLStore({
-  host: "localhost",
+  host: "localhost",  
   port: 3306,
   user: "root",
   password: "128500",
-  database: "mydb"
+  database: "vehicle_db"
 });
 
 app.use(
@@ -34,29 +35,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-
-
-
-
 app.get("/", (request, response) => {
   let ID = request.session.userId;
   let LOGIN = request.session.userLogin;
-  let ADMIN = request.session.admin;
-  
-  promiseMySqlQuery(`SELECT * FROM vehicle`)
+  let ROLE = request.session.role;
+
+  promiseMySqlQuery(`call select_all_car()`)
     .then(results => {
-      response.render("index", { data: results, LOGIN, ID, ADMIN });
+      response.render("index", { data: results[0], LOGIN, ID, ROLE });
     })
     .catch(err => {
       response.send(err);
     })
 });
 
-
 app.use('/api/user/', routersUser.router);
-
-
-
+app.use('/api/vehicle/', vehicleSpec);
 
 app.use(
   "/api/auth",
@@ -71,24 +65,24 @@ app.use(
   })
 );
 
-app.get("/add", (req, res) => {
+app.get("/add", (request, response) => {
 
-  let ID = req.session.userId;
-  let LOGIN = req.session.userLogin;
-  let ADMIN = req.session.admin;
+  let ID = request.session.userId;
+  let LOGIN = request.session.userLogin;
+  let ROLE = request.session.role;
   
-  if (req.session.admin) {
-    mysql.connection.query("SELECT * FROM vehicle_type", (err, results) => {
-      if (!err) res.render("create", { data: results, LOGIN, ADMIN });
+  if (request.session.role) {
+    mysql.connection.query("SELECT * FROM vehicle", (err, results) => {
+      if (!err) response.render("create", { data: results, LOGIN, ROLE });
       else console.log(err);
     });
   } else {
-    res.send("oops");
+    response.send("oops");
   }
 });
 
-app.post("/add", (req, res) => {
-  res.send(req.body);
+app.post("/add", (request, response) => {
+  response.send(request.body);
   // res.redirect("/");
 });
 
@@ -108,71 +102,65 @@ app.post("/add", (req, res) => {
 //     });
 // });
 
-app.get("/info/:id", (req, res) => {
+app.get("/info/:id", (request, response) => {
 
-  let ID = req.session.userId;
-  let LOGIN = req.session.userLogin;
-  let ADMIN = req.session.admin;
+  let ID = request.session.userId;
+  let LOGIN = request.session.userLogin;
+  let ROLE = request.session.role;
 
-  promiseMySqlQuery(`call query_car(${req.params.id})`)
+  promiseMySqlQuery(`call q_select_car(${request.params.id})`)
     .then(results => {
-      if (!results[0][0]) {
-        res.render("404", { data: "Вибачте, такої сторінки не існує!" });
+      if(results[0][0]) {
+        response.render('infocar', {data: results[0][0], LOGIN, ROLE});
       } else {
-
-        res.render("infocar", {
-          data: results[0][0],
-          dbl: results.length,
-          LOGIN,
-          ADMIN,
-          ID
-        });
+        response.render('404', {data: 'asasdasd', LOGIN, ROLE});
       }
     })
     .catch(err => {
-      console.log('Error', err);
-    });
+      console.log(err);
+    })
 
 });
 
-app.get("/api/db", (req, res) => {
-  mysql.connection.query(mysql.selectCar(), (err, results) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.json({ data: results });
-    }
-  });
+app.get("/api/db", (request, response) => {
+  
+  promiseMySqlQuery(`call select_all_car()`)
+    .then(results => {
+      response.send(results[0]);
+    })
+    .catch(err => {
+      response.send(err);
+    })
 });
 
-app.get("/login", (req, res) => {
+app.get("/login", (request, response) => {
 
-  let ID = req.session.userId;
-  let LOGIN = req.session.userLogin;
-  let ADMIN = req.session.admin;
+  let ID = request.session.userId;
+  let LOGIN = request.session.userLogin;
+  let ROLE = request.session.role;
 
-  if(!req.session.userLogin){
-    res.render("login", {
+  if(!request.session.userLogin){
+    response.render("login", {
       LOGIN,
       ID
     });
   } else {
-    res.redirect('/');
+    response.redirect('/');
   }
 });
 
-app.get("/admin-panel/users", (req, res) => {
+app.get("/admin-panel/users", (request, response) => {
 
-  let ID = req.session.userId;
-  let LOGIN = req.session.userLogin;
-  let ADMIN = req.session.admin;
+  let ID = request.session.userId;
+  let LOGIN = request.session.userLogin;
+  let ROLE = request.session.role;
   
-  if(req.session.admin || req.session.login){
+  if(request.session.role || request.session.login){
     promiseMySqlQuery(`SELECT * FROM users`)
       .then(results => {
-        res.render("admin-panel", {
+        response.render("admin-panel", {
           LOGIN,
-          ADMIN,
+          ROLE,
           ID,
           results
         });
@@ -181,7 +169,7 @@ app.get("/admin-panel/users", (req, res) => {
         console.log('Error', err)
       })
   } else {
-    res.send('nope nope nope');
+    response.send('nope nope nope');
   }
 
 });
@@ -205,7 +193,7 @@ app.post("/login", (request, response) => {
             fields: ["login", "pass"]
           });
         } else {
-          bcrypt.compare(pass, results[0].pass_hash, function(
+          bcrypt.compare(pass, results[0].hash_pass, function(
             err,
             resultsHash
           ) {
@@ -229,19 +217,19 @@ app.post("/login", (request, response) => {
   }
 });
 
-app.get("/signin", (req, res) => {
+app.get("/signin", (request, response) => {
 
-  let ID = req.session.userId;
-  let LOGIN = req.session.userLogin;
-  let ADMIN = req.session.admin;
+  let ID = request.session.userId;
+  let LOGIN = request.session.userLogin;
+  let ROLE = request.session.role;
 
-  if(!req.session.userLogin){
-    res.render("signin", {
+  if(!request.session.userLogin){
+    response.render("signin", {
       LOGIN,
       ID
     });
   } else {
-    res.redirect('/');
+    response.redirect('/');
   }
 });
 
@@ -284,7 +272,7 @@ app.post("/signin", (request, response) => {
           
           if (!results[0]) {
             bcrypt.hash(pass, null, null, function(err, hash) {
-              mysql.connection.query(`INSERT INTO users (user_name, pass_hash, admin, create_time) VALUES ('${userName}', '${hash}', '0', '${date}')`,
+              mysql.connection.query(`INSERT INTO users (user_name, hash_pass, role, create_date) VALUES ('${userName}', '${hash}', '0', '${date}')`,
                 (err, res) => {
                   if(err) {
                     console.log(err);
@@ -297,7 +285,7 @@ app.post("/signin", (request, response) => {
                   mysql.connection.query(
                     `select * from users where user_name = '${userName}'`,
                     (err2, res2) => {
-                      setSessions(request, res2);
+                      setSessions(requestuest, res2);
                       response.json({
                         ok: true,
                         errMessage: "Реєстрацію завершено!"
@@ -343,24 +331,32 @@ app.get('/api/data/user/:id', (request, response) => {
     
 }); 
 
-app.use(function(req, res, next) {
+app.post("/api/session", (request, response) => {
+  response.json({
+    id: request.session.userId,
+    userName: request.session.userLogin,
+    role: request.session.role
+  });
+});
 
-  let ID = req.session.userId;
-  let LOGIN = req.session.userLogin;
-  let ADMIN = req.session.admin;
+app.use(function(request, response, next) {
 
-  res.status(404);
-  res.render("404", { data: "Вибачте, такої сторінки не існує!", LOGIN, ADMIN });
+  let ID = request.session.userId;
+  let LOGIN = request.session.userLogin;
+  let ROLE = request.session.role;
+
+  response.status(404);
+  response.render("404", { data: "Вибачте, такої сторінки не існує!", LOGIN, ROLE });
 });
 
 app.listen(config.PORT, () => {
   console.log(`Listening port ${config.PORT}`);
 });
 
-function setSessions(req, value) {
-  req.session.userId = value[0].id;
-  req.session.userLogin = value[0].user_name;
-  req.session.admin = value[0].admin;
+function setSessions(request, value) {
+  request.session.userId = value[0].id;
+  request.session.userLogin = value[0].user_name;
+  request.session.role = value[0].role;
 }
 
 function promiseMySqlQuery(query){
