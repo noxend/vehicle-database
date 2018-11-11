@@ -29,6 +29,7 @@ router.get('/type-car', (request, response) => {
   .catch(err => {console.log(err)});
 }),
 
+
 router.get('/type-engine', (request, response) => {
   promiseMySqlQuery(`SELECT * FROM type_of_engine`)
   .then(results => response.send(results))
@@ -49,6 +50,18 @@ router.get('/type-gearbox', (request, response) => {
 
 router.get('/mark', (request, response) => {
   promiseMySqlQuery(`SELECT * FROM mark`)
+  .then(results => response.send(results))
+  .catch(err => {console.log(err)});
+}),
+
+router.get('/country', (request, response) => {
+  promiseMySqlQuery(`SELECT * FROM country`)
+  .then(results => response.send(results))
+  .catch(err => {console.log(err)});
+}),
+
+router.get('/color', (request, response) => {
+  promiseMySqlQuery(`SELECT * FROM color`)
   .then(results => response.send(results))
   .catch(err => {console.log(err)});
 }),

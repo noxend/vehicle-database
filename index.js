@@ -1,5 +1,6 @@
 const express = require("express");
 const session = require("express-session");
+const Sequelize = require("./sequelize");
 const MySQLStore = require("express-mysql-session")(session);
 const bodyParser = require("body-parser");
 const config = require("./config");
@@ -9,12 +10,12 @@ const bcrypt = require("bcrypt-nodejs");
 const router = express.Router();
 
 const routersUser = require("./routers/router-user");
-const vehicleSpec= require("./routers/router-vehicle").router;
+const vehicleSpec = require("./routers/router-vehicle").router;
 
 const app = express();
 
 const sessionStore = new MySQLStore({
-  host: "localhost",  
+  host: "localhost",
   port: 3306,
   user: "root",
   password: "128500",
@@ -36,21 +37,33 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (request, response) => {
-  let ID = request.session.userId;
-  let LOGIN = request.session.userLogin;
-  let ROLE = request.session.role;
-
-  promiseMySqlQuery(`call select_all_car()`)
+  let dataUser = getSessionData(request);
+  promiseMySqlQuery("call select_all_car()")
     .then(results => {
-      response.render("index", { data: results[0], LOGIN, ID, ROLE });
+      response.render("index", { data: results[0], dataUser });
     })
     .catch(err => {
       response.send(err);
-    })
+    });
 });
 
-app.use('/api/user/', routersUser.router);
-app.use('/api/vehicle/', vehicleSpec);
+app.get('/search/:keyword', (request, response) => {
+  let dataUser = getSessionData(request);
+  mysql.connection.query(`call vehicle_db.search('%${request.params.keyword}%');` , (err, results) => {
+    response.render("index", { data: results[0], dataUser });
+  });
+});
+
+app.post("/api/vehicle/search", (request, response) => {
+  mysql.connection.query(`call vehicle_db.search('%${request.body.data}%');` , (err, results) => {
+    response.json(results[0]);
+  });
+})
+
+app.use("/api/user/", routersUser.router);
+app.use("/api/vehicle/", vehicleSpec);
+
+app.userData = {};
 
 app.use(
   "/api/auth",
@@ -66,112 +79,90 @@ app.use(
 );
 
 app.get("/add", (request, response) => {
-
-  let ID = request.session.userId;
-  let LOGIN = request.session.userLogin;
-  let ROLE = request.session.role;
-  
+  let dataUser = getSessionData(request);
   if (request.session.role) {
     mysql.connection.query("SELECT * FROM vehicle", (err, results) => {
-      if (!err) response.render("create", { data: results, LOGIN, ROLE });
+      if (!err) response.render("create", { data: results, dataUser });
       else console.log(err);
     });
   } else {
-    response.send("oops");
+    response.json("oops");
   }
 });
 
 app.post("/add", (request, response) => {
-  response.send(request.body);
-  // res.redirect("/");
+  response.redirect("/");
+//   response.send(request.body);
+  mysql.connection.query(
+    `INSERT INTO vehicle (model, year, power, type_of_gearbox_id, mark_id, type_of_car_id, type_of_engine_id, type_of_fuel_id, color_id, country_id, image) VALUES
+	('${request.body.model}',
+	'${request.body.year}',
+	'${request.body.power}',
+	'${request.body.typeTransmission}',
+	'${request.body.mark}',
+	'${request.body.bodyCar}',
+	'${request.body.typeEngine}',
+	'${request.body.typeFuel}',
+	'${request.body.color}',
+	'${request.body.country}',
+	'${request.body.image}');`,
+    (err, result) => {
+		console.log(err);
+		console.log(result);
+	}
+  );
 });
 
-// app.get('/info/:id', (req, res) => {
-//     mysql.connection.query(`SELECT * FROM vehicle`, (err, results) => {
-//         if (err) { res.send(err); } else {
-//             if(req.params.id > results.length){
-//                 res.render('404');
-//             } else {
-//                 var result = results.find((result) => {
-//                     return result.id === Number(req.params.id);
-//                 });
-//                 res.send(result);
-//                 // res.render('infocar', { data: result, dbl: results.length});
-//             }
-//         }
-//     });
-// });
-
 app.get("/info/:id", (request, response) => {
-
-  let ID = request.session.userId;
-  let LOGIN = request.session.userLogin;
-  let ROLE = request.session.role;
-
+  let dataUser = getSessionData(request);
   promiseMySqlQuery(`call q_select_car(${request.params.id})`)
     .then(results => {
-      if(results[0][0]) {
-        response.render('infocar', {data: results[0][0], LOGIN, ROLE});
+      if (results[0][0]) {
+        response.render("infocar", { data: results[0][0], dataUser });
       } else {
-        response.render('404', {data: 'asasdasd', LOGIN, ROLE});
+        response.render("404", { data: "asasdasd", dataUser });
       }
     })
     .catch(err => {
       console.log(err);
-    })
-
+    });
 });
 
 app.get("/api/db", (request, response) => {
-  
-  promiseMySqlQuery(`call select_all_car()`)
+  promiseMySqlQuery("call select_all_car()")
     .then(results => {
       response.send(results[0]);
     })
     .catch(err => {
       response.send(err);
-    })
+    });
 });
 
 app.get("/login", (request, response) => {
-
-  let ID = request.session.userId;
-  let LOGIN = request.session.userLogin;
-  let ROLE = request.session.role;
-
-  if(!request.session.userLogin){
-    response.render("login", {
-      LOGIN,
-      ID
-    });
+  let dataUser = getSessionData(request);
+  if (!request.session.userLogin) {
+    response.render("login", { dataUser });
   } else {
-    response.redirect('/');
+    response.redirect("/");
   }
 });
 
 app.get("/admin-panel/users", (request, response) => {
-
-  let ID = request.session.userId;
-  let LOGIN = request.session.userLogin;
-  let ROLE = request.session.role;
-  
-  if(request.session.role || request.session.login){
-    promiseMySqlQuery(`SELECT * FROM users`)
+  let dataUser = getSessionData(request);
+  if (request.session.role || request.session.login) {
+    promiseMySqlQuery("SELECT * FROM users")
       .then(results => {
         response.render("admin-panel", {
-          LOGIN,
-          ROLE,
-          ID,
+          dataUser,
           results
         });
       })
       .catch(err => {
-        console.log('Error', err)
-      })
+        console.log("Error", err);
+      });
   } else {
-    response.send('nope nope nope');
+    response.send("nope nope nope");
   }
-
 });
 
 app.post("/login", (request, response) => {
@@ -185,7 +176,9 @@ app.post("/login", (request, response) => {
       fields: ["userName", "pass"]
     });
   } else {
-    mysql.connection.query(`select * from users where user_name = '${login}'`, (err, results) => {
+    mysql.connection.query(
+      `select * from users where user_name = '${login}'`,
+      (err, results) => {
         if (!results[0]) {
           response.json({
             ok: false,
@@ -218,18 +211,12 @@ app.post("/login", (request, response) => {
 });
 
 app.get("/signin", (request, response) => {
+  let dataUser = getSessionData(request);
 
-  let ID = request.session.userId;
-  let LOGIN = request.session.userLogin;
-  let ROLE = request.session.role;
-
-  if(!request.session.userLogin){
-    response.render("signin", {
-      LOGIN,
-      ID
-    });
+  if (!request.session.userLogin) {
+    response.render("signin", { dataUser });
   } else {
-    response.redirect('/');
+    response.redirect("/");
   }
 });
 
@@ -264,17 +251,18 @@ app.post("/signin", (request, response) => {
       fields: ["pass", "confirmPass"]
     });
   } else {
-    mysql.connection.query(`select * from users where user_name = '${userName}'`,(err, results) => {
-
+    mysql.connection.query(
+      `select * from users where user_name = '${userName}'`,
+      (err, results) => {
         if (err) {
           response.send(err);
         } else {
-          
           if (!results[0]) {
             bcrypt.hash(pass, null, null, function(err, hash) {
-              mysql.connection.query(`INSERT INTO users (user_name, hash_pass, role, create_date) VALUES ('${userName}', '${hash}', '0', '${date}')`,
+              mysql.connection.query(
+                `INSERT INTO users (user_name, hash_pass, role, create_date, image) VALUES ('${userName}', '${hash}', '0', '${date}', 'https://avatars2.githubusercontent.com/u/35522827?s=460&v=4')`,
                 (err, res) => {
-                  if(err) {
+                  if (err) {
                     console.log(err);
                     response.json({
                       ok: false,
@@ -285,7 +273,7 @@ app.post("/signin", (request, response) => {
                   mysql.connection.query(
                     `select * from users where user_name = '${userName}'`,
                     (err2, res2) => {
-                      setSessions(requestuest, res2);
+                      setSessions(request, res2);
                       response.json({
                         ok: true,
                         errMessage: "Реєстрацію завершено!"
@@ -308,30 +296,27 @@ app.post("/signin", (request, response) => {
   }
 });
 
-app.get('/api/data/user', (request, response) => {
-
+app.get("/api/data/user", (request, response) => {
   promiseMySqlQuery(`SELECT * FROM users WHERE id = ${request.session.userId}`)
     .then(results => {
-      response.json({data: results})
+      response.json({ data: results });
     })
     .catch(err => {
       console.log(err);
     });
 });
 
-app.get('/api/data/user/:id', (request, response) => {
-
+app.get("/api/data/user/:id", (request, response) => {
   promiseMySqlQuery(`SELECT * FROM users WHERE id = '${request.params.id}'`)
     .then(results => {
-      response.json({data: results})
+      response.json({ data: results });
     })
     .catch(err => {
       console.log(err);
     });
-    
-}); 
+});
 
-app.post("/api/session", (request, response) => {
+app.get("/api/session", (request, response) => {
   response.json({
     id: request.session.userId,
     userName: request.session.userLogin,
@@ -340,13 +325,12 @@ app.post("/api/session", (request, response) => {
 });
 
 app.use(function(request, response, next) {
-
-  let ID = request.session.userId;
-  let LOGIN = request.session.userLogin;
-  let ROLE = request.session.role;
-
+  let dataUser = getSessionData(request);
   response.status(404);
-  response.render("404", { data: "Вибачте, такої сторінки не існує!", LOGIN, ROLE });
+  response.render("404", {
+    data: "Вибачте, такої сторінки не існує!",
+    dataUser
+  });
 });
 
 app.listen(config.PORT, () => {
@@ -357,18 +341,32 @@ function setSessions(request, value) {
   request.session.userId = value[0].id;
   request.session.userLogin = value[0].user_name;
   request.session.role = value[0].role;
+  if (value[0].image === null) {
+    request.session.image =
+      "https://avatars2.githubusercontent.com/u/35522827?s=460&v=4";
+    console.log(request.session.image);
+  } else {
+    request.session.image = value[0].image;
+  }
 }
 
-function promiseMySqlQuery(query){
+function getSessionData(request) {
+  return (data = {
+    ID: request.session.userId,
+    LOGIN: request.session.userLogin,
+    ROLE: request.session.role,
+    IMAGE: request.session.image
+  });
+}
+
+function promiseMySqlQuery(query) {
   return new Promise(function(resolve, reject) {
     mysql.connection.query(query, (err, results) => {
-      if(err) { reject(err) }
-      else { resolve(results) }
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
     });
-  })
+  });
 }
-
-
-
-
-

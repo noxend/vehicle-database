@@ -10,13 +10,8 @@
     <form action="" method="POST">
         <div class="form-group">
             <label for="">Марка</label>
-            <select class="form-control" name="mark" required>
-                <option value="0">Виберіть</option>
-                <% data.forEach(function(items){ %>
-                <option value="<%-items.type%>">
-                    <%-items.type%>
-                </option>
-                <% }); %>
+            <select class="form-control" name="mark" required id="mark">
+                <option value="none">Виберіть</option>
             </select>
             <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
         </div>
@@ -24,23 +19,30 @@
             <label for="">Модель</label>
             <input type="text" class="form-control" name="model" required>
         </div>
-
-
+        <div class="form-group">
+            <label for="">Тип кузова:</label>
+            <select class="form-control" name="bodyCar" required id="body">
+                <option value="none">Виберіть</option>
+            </select>
+            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
+        </div>
         <div class="form-group">
             <label for="">Країна виробника:</label>
-            <select class="form-control" name="country" required>
-                <option value="0">Виберіть</option>
-                <% data.forEach(function(items){ %>
-                <option value="<%-items.type%>">
-                    <%-items.type%>
-                </option>
-                <% }); %>
+            <select class="form-control" name="country" required id="country">
+                <option value="none">Виберіть</option>
             </select>
             <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
         </div>
         <div class="form-group">
             <label for="">Рік</label>
             <input type="number" class="form-control" name="year" required>
+        </div>
+        <div class="form-group">
+            <label for="">Колір:</label>
+            <select class="form-control" name="color" required id="color">
+                <option value="none">Виберіть</option>
+            </select>
+            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
         </div>
         <div class="form-group">
             <label for="">Лінк на зображення:</label>
@@ -78,39 +80,17 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="">Тип двигуна</label>
-                            <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="typeEngine"
-                                required>
+                            <select class="form-control" name="typeEngine" required id="engine">
+                                <option value="none">Виберіть</option>
+                            </select>
                             <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
                         </div>
                         <div class="form-group">
                             <label for="">Тип палива</label>
-                            <select class="form-control" name="typeFuel" required>
-                                <option value="0">Виберіть</option>
-                                <% data.forEach(function(items){ %>
-                                <option value="<%-items.type%>">
-                                    <%-items.type%>
-                                </option>
-                                <% }); %>
+                            <select class="form-control" name="typeFuel" required id="fuel">
+                                <option value="none">Виберіть</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="">Об'єм двигуна</label>
-                            <div class="input-group">
-                                <select class="form-control" name="capacity" required>
-                                    <option value="0">Виберіть</option>
-                                    <% data.forEach(function(items){ %>
-                                    <option value="<%-items.type%>">
-                                        <%-items.type%>
-                                    </option>
-                                    <% }); %>
-                                </select>
-                                <div class="input-group-append">
-                                    <span class="input-group-text">Літра</span>
-                                </div>
-                            </div>
-                            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
-                        </div>
-
                         <div class="form-group">
                             <label for="">Потужність</label>
                             <div class="input-group">
@@ -138,25 +118,8 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="">Тип трансмісії</label>
-                            <select class="form-control" name="typeTransmission" required>
-                                <option value="0">Виберіть</option>
-                                <% data.forEach(function(items){ %>
-                                <option value="<%-items.type%>">
-                                    <%-items.type%>
-                                </option>
-                                <% }); %>
-                            </select>
-                            <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="">Кількість ступенів</label>
-                            <select class="form-control" name="countTransmission" required>
-                                <option value="0">Виберіть</option>
-                                <% data.forEach(function(items){ %>
-                                <option value="<%-items.type%>">
-                                    <%-items.type%>
-                                </option>
-                                <% }); %>
+                            <select class="form-control" name="typeTransmission" required id="transmission">
+                                <option value="none">Виберіть</option>
                             </select>
                             <small class="form-text text-muted">Поле обов'язкове для заповнення!</small>
                         </div>

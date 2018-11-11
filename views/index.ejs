@@ -1,18 +1,24 @@
 <% include layout/header.ejs %>
 <% include layout/navbar.ejs %>
-
-<div class="container my-container">
-    <div class="row">
-        <% include layout/card.ejs %>
-    </div>
+<div class="wrapper">
+  <div class="container my-container">
+    <form id="form">
+      <input
+        type="text"
+        placeholder="Пошук"
+        class="my-input-style"
+        name="keyword"
+        id="search"
+      />
+    </form>
+    <div class="row" id="cards-container"><% include layout/card.ejs %></div>
+  </div>
+  <% if (dataUser.ROLE) { %>
+  <a href="/add">
+    <div class="addnew"><i class="fas fa-plus"></i></div>
+  </a>
+  <%}%>
 </div>
-<% if (ROLE) { %>
-<a href="/add">
-    <div class='addnew'>
-        <i class="fas fa-plus"></i>
-    </div>
-</a>
-<%}%>
-
+<script src="/javascript/load-vehicle.js"></script>
 
 <% include layout/footer.ejs %>

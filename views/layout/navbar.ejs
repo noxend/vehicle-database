@@ -11,7 +11,7 @@
                     <a class="nav-link" href="/">Про проект<span class="sr-only">(current)</span></a>
                 </li>
             </ul>
-            <% if (!LOGIN) { %>
+            <% if (!dataUser.LOGIN) { %>
             <div>
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
@@ -25,12 +25,12 @@
             <% } %>
         </div>
         <div class="right-side">
-            <% if (LOGIN) { %>
+            <% if (dataUser.LOGIN) { %>
             <div class="dropdown">
                 <div class="details">
                     <div class="menu-container" id="menu-container">
-                        <img class="thumbnail-image" id="thumbnail-image" alt="">
-                        <p><%-LOGIN%></p>  
+                        <img class="thumbnail-image" id="thumbnail-image" alt="" src="<%-dataUser.IMAGE%>">
+                        <p><%-dataUser.LOGIN%></p>  
                         <i class="fas fa-caret-down"></i>
                     </div>
                     <div class="my-menu hiden" id="my-menu-id" aria-hidden="true">
@@ -38,17 +38,17 @@
                             <li>
                                 <a href="#" class="header-menu">
                                     <div>
-                                        <img class="thumbnail-image-menu" id="thumbnail-image-menu" src="https://coubsecure-s.akamaihd.net/get/b112/p/channel/cw_avatar/33bd3fb4778/cf1f7cfc98a9a758401b0/profile_pic_new_1474645315_dssoj1_att-url-download.gif"
+                                        <img class="thumbnail-image-menu" id="thumbnail-image-menu" src="<%-dataUser.IMAGE%>"
                                             alt="">
                                     </div>
                                     <div class="name-menu">
-                                        <%-LOGIN%>
+                                        <%-dataUser.LOGIN%>
                                     </div>
                                     <div class="email-menu"></div>
                                 </a>
                             </li>
                             <li><a class="items-menu" href="#"><i class="fas fa-sliders-h"></i> Налаштування</a></li>
-                            <%if(ROLE == 1) {%>
+                            <%if(dataUser.ROLE == 1) {%>
                             <li><a class="items-menu" href="/admin-panel/users"><i class="fas fa-sliders-h"></i> Адмін
                                     панель</a></li>
                             <%}%>
@@ -65,7 +65,6 @@
                     <div class="menu-bg"></div>
                 </div>
             </div>
-            <script src="/javascript/nav-bar.js"></script>
             <script src="/javascript/dropdown-menu.js"></script>
             <% } %>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"

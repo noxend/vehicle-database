@@ -12,7 +12,7 @@ function promiseMySqlQuery(query){
 }
 
 router.post('/update', (request, response) => {
-  promiseMySqlQuery(`UPDATE users SET user_name = '${request.body.newLogin}', admin = '${request.body.userRole ? 1 : 0}' WHERE id = '${request.body.ID}'`)
+  promiseMySqlQuery(`UPDATE users SET user_name = '${request.body.newLogin}', role = '${request.body.userRole ? 1 : 0}' WHERE id = '${request.body.ID}'`)
   .then(results => console.log(results))
   .catch(err => {console.log(err)});
 }),

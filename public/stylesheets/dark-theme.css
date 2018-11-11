@@ -44,3 +44,16 @@
 .dark-theme h1, .dark-theme h2, .dark-theme h3, .dark-theme h4, .dark-theme h5, .dark-theme h6, .dark-theme p, .dark-theme label{
     color: white;
 }
+
+.dark-theme .my-input-style {
+    background-color: #252525;
+    color: white;
+    border-bottom: 3px solid #1b1b1b;
+}
+.dark-theme .my-input-style:focus {
+    border-bottom: 3px solid #f44336;
+}
+
+/* .dark-theme .my-input-style::placeholder {
+    color: white;
+} */
