@@ -19,7 +19,9 @@
         <div class='bottom1'>
             <nav class="nav nav-pills nav-justified">
                 <a class="nav-link" href="/info/<%-items.id%>">Більше</a>
-                <a class="nav-link" href="/info/<%-items.id%>">Редагувати</a>
+                <% if (dataUser.ROLE) { %>
+                    <a class="nav-link" href="/edit/<%-items.id%>">Редагувати</a>
+                <%}%>
             </nav>
         </div>
     </div>

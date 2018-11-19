@@ -9,7 +9,7 @@
         <a href="">
             <i class="fas fa-arrow-circle-left"></i>
         </a>
-        <a href="">
+        <a href="/info/">
             <i class="fas fa-arrow-circle-right"></i>
         </a>
 </div>
@@ -22,6 +22,21 @@
             <%-data.mark_name%>
             <%-data.model%>
         </h1>
+        <p>
+           <b>Країна: </b><%-data.country%>
+        </p>
+        <p>
+            <b>Тип кузову: </b><%-data.body%>
+        </p>
+        <p>
+            <b>Тип трансмісії: </b><%-data.gearbox%>
+        </p>
+        <p>
+            <b>Тип двигуна: </b><%-data.engine%>
+        </p>
+        <p>
+            <b>Тип палива: </b><%-data.fuel%>
+        </p>           
     </div>
     <div class="">
         <div class="main_info col-lg-8 col-sm-12">
@@ -29,4 +44,5 @@
         </div>
     </div>
 </div>
+
 <% include layout/footer.ejs %>

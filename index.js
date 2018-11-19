@@ -36,29 +36,61 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
+// app.get("/", (request, response) => {
+//   let dataUser = getSessionData(request);
+//   promiseMySqlQuery("call select_all_car()")
+//     .then(results => {
+//       response.render("index", { data: results[0], dataUser });
+//     })
+//     .catch(err => {
+//       response.send(err);
+//     });
+// });
+
 app.get("/", (request, response) => {
-  let dataUser = getSessionData(request);
-  promiseMySqlQuery("call select_all_car()")
-    .then(results => {
-      response.render("index", { data: results[0], dataUser });
+  response.redirect("/page/1");
+});
+
+app.get("/page/:page", (request, response) => {
+  const countResults = 9;
+  const page = request.params.page || 1;
+  const dataUser = getSessionData(request);
+
+  promiseMySqlQuery(`call select_all_car()`)
+    .then(rows => {
+      promiseMySqlQuery(
+        `call pagination_select(${(page - 1) * countResults}, ${countResults})`
+      )
+        .then(results => {
+          response.render("index", { data: results[0], dataUser, page, countPages: Math.ceil(rows[0].length / countResults) });
+        })
+        .catch(err => {
+          response.send(err);
+        });
     })
     .catch(err => {
       response.send(err);
     });
 });
 
-app.get('/search/:keyword', (request, response) => {
+app.get("/search/:keyword", (request, response) => {
   let dataUser = getSessionData(request);
-  mysql.connection.query(`call vehicle_db.search('%${request.params.keyword}%');` , (err, results) => {
-    response.render("index", { data: results[0], dataUser });
-  });
+  mysql.connection.query(
+    `call vehicle_db.search('%${request.params.keyword}%');`,
+    (err, results) => {
+      response.render("index", { data: results[0], dataUser });
+    }
+  );
 });
 
 app.post("/api/vehicle/search", (request, response) => {
-  mysql.connection.query(`call vehicle_db.search('%${request.body.data}%');` , (err, results) => {
-    response.json(results[0]);
-  });
-})
+  mysql.connection.query(
+    `call vehicle_db.search('%${request.body.data}%');`,
+    (err, results) => {
+      response.json(results[0]);
+    }
+  );
+});
 
 app.use("/api/user/", routersUser.router);
 app.use("/api/vehicle/", vehicleSpec);
@@ -78,6 +110,46 @@ app.use(
   })
 );
 
+app.get("/edit/:id", (request, response) => {
+  let dataUser = getSessionData(request);
+  promiseMySqlQuery(`SELECT * FROM vehicle WHERE id = ${request.params.id}`)
+    .then(results => {
+      if (results) {
+        // response.send(results[0]);
+        response.render("edit", { data: results[0], dataUser });
+      } else {
+        response.render("404", { data: "asasdasd", dataUser });
+      }
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
+
+app.post("/edit", (request, response) => {
+  mysql.connection.query(
+    `UPDATE vehicle SET
+    model = '${request.body.model}',
+	  year = '${request.body.year}',
+	  power = '${request.body.power}',
+	  type_of_gearbox_id = '${request.body.transmission}',
+    mark_id = '${request.body.mark}',
+    type_of_car_id = '${request.body.body}',
+    type_of_engine_id = '${request.body.engine}',
+    type_of_fuel_id = '${request.body.fuel}',
+    color_id = '${request.body.color}',
+    country_id = '${request.body.country}',
+    image = '${request.body.image}' WHERE (id = '${request.body.id}');`,
+    (err, result) => {
+      if (!err) {
+        response.send({state: true, 
+          data: "hello"});
+      }
+    }
+  );
+});
+
 app.get("/add", (request, response) => {
   let dataUser = getSessionData(request);
   if (request.session.role) {
@@ -91,8 +163,10 @@ app.get("/add", (request, response) => {
 });
 
 app.post("/add", (request, response) => {
-  response.redirect("/");
-//   response.send(request.body);
+  console.log('add');
+  
+  // mysql.connection.query(`INSERT INTO color (color) VALUES ('Білий')`, (err, result) => {});
+ 
   mysql.connection.query(
     `INSERT INTO vehicle (model, year, power, type_of_gearbox_id, mark_id, type_of_car_id, type_of_engine_id, type_of_fuel_id, color_id, country_id, image) VALUES
 	('${request.body.model}',
@@ -107,9 +181,10 @@ app.post("/add", (request, response) => {
 	'${request.body.country}',
 	'${request.body.image}');`,
     (err, result) => {
-		console.log(err);
-		console.log(result);
-	}
+      if (err) console.log(err);
+      console.log(result);
+      response.redirect('/');
+    }
   );
 });
 

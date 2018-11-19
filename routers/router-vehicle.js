@@ -11,6 +11,12 @@ function promiseMySqlQuery(query){
   })
 }
 
+router.get('/edit-data/:id', (request, response) => {
+  promiseMySqlQuery(`SELECT * FROM vehicle WHERE id = ${request.params.id}`)
+  .then(results => response.send(results))
+  .catch(err => {console.log(err)});
+}),
+
 router.get('/all', (request, response) => {
   promiseMySqlQuery(`call select_all_car()`)
   .then(results => response.send(results))

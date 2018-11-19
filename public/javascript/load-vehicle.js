@@ -72,7 +72,6 @@ function search() {
     });
 }
 
-
 function main() {
     search();
 }
